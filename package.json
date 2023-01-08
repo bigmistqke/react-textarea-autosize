@@ -1,7 +1,7 @@
 {
   "version": "0.0.0",
   "name": "solid-textarea-autosize",
-  "description": "textarea component for React which grows with content",
+  "description": "textarea component for Solid which grows with content",
   "license": "MIT",
   "author": "Andrey Popp <8mayday@gmail.com> (httsps://andreypopp.com/)",
   "contributors": [
