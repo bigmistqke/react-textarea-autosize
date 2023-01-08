@@ -1,4 +1,4 @@
-import { ComponentProps, onMount } from "solid-js";
+import { ComponentProps, createEffect, createSignal, onMount } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import calculateNodeHeight from "./calculateNodeHeight";
 import getSizingData, { SizingData } from "./getSizingData";
@@ -21,22 +21,23 @@ export interface TextareaAutosizeProps extends Omit<TextareaProps, "style"> {
   style?: Style;
 }
 
-type Props = {
-  cacheMeasurements?: boolean;
-  maxRows?: number;
-  minRows?: number;
-  oninput?: (event: InputEvent) => void;
-  ref: (textarea: HTMLTextAreaElement) => void;
-  onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
-} & TextareaProps;
-
-export default function TextareaAutosize(props: Props) {
-  let textarea: HTMLTextAreaElement;
+function TextareaAutosize(
+  props: {
+    cacheMeasurements?: boolean;
+    maxRows?: number;
+    minRows?: number;
+    oninput?: (event: InputEvent) => void;
+    ref?: (textarea: HTMLTextAreaElement) => void;
+    onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
+  } & TextareaProps,
+) {
+  const [textarea, setTextarea] = createSignal<HTMLTextAreaElement>();
   let heightRef = 0;
   let measurementsCacheRef: SizingData | undefined = undefined;
 
   const resizeTextarea = () => {
-    const node = textarea!;
+    const node = textarea();
+    if (!node) return;
     const nodeSizingData =
       props.cacheMeasurements && measurementsCacheRef ? measurementsCacheRef : getSizingData(node);
 
@@ -65,12 +66,14 @@ export default function TextareaAutosize(props: Props) {
     props.oninput?.(event);
   };
 
-  onMount(() => {
-    if (typeof document !== "undefined") {
+  createEffect(() => {
+    if (typeof document !== "undefined" && textarea()) {
       resizeTextarea();
       useWindowResizeListener(resizeTextarea);
     }
   });
 
-  return <textarea {...props} oninput={handleChange} ref={textarea!} />;
+  return <textarea {...props} oninput={handleChange} ref={(element) => setTextarea(element)} />;
 }
+
+export default TextareaAutosize;
