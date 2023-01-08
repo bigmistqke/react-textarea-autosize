@@ -1,16 +1,6 @@
-.DS_Store
-*.log
-example/bundle.js
-example/.nojekyll
-dist
 node_modules
-.cache
-.parcel-cache
+dist
+gitignore
 
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+# VSC Settings
+.vscode/settings.json

@@ -1,20 +1,8 @@
-import * as React from 'react';
-import useLatest from 'use-latest';
-
-export { default as useComposedRef } from 'use-composed-ref';
+import { onCleanup } from 'solid-js';
 
 export const useWindowResizeListener = (listener: (event: UIEvent) => any) => {
-  const latestListener = useLatest(listener);
+  const handler: typeof listener = (event) => listener(event);
 
-  React.useLayoutEffect(() => {
-    const handler: typeof listener = (event) => {
-      latestListener.current(event);
-    };
-
-    window.addEventListener('resize', handler);
-
-    return () => {
-      window.removeEventListener('resize', handler);
-    };
-  }, []);
+  window.addEventListener('resize', handler);
+  onCleanup(() => window.removeEventListener('resize', handler));
 };

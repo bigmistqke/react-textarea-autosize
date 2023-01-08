@@ -1,36 +1,40 @@
-[![npm version](https://img.shields.io/npm/v/react-textarea-autosize.svg)](https://www.npmjs.com/package/react-textarea-autosize)
-[![npm](https://img.shields.io/npm/dm/react-textarea-autosize.svg)](https://www.npmjs.com/package/react-textarea-autosize)
+[![npm version](https://img.shields.io/npm/v/solid-textarea-autosize.svg)](https://www.npmjs.com/package/solid-textarea-autosize)
+[![npm](https://img.shields.io/npm/dm/solid-textarea-autosize.svg)](https://www.npmjs.com/package/solid-textarea-autosize)
 
-# react-textarea-autosize
+# solid-textarea-autosize
+
+A port of [react-textarea-autosize](https://github.com/Andarist/react-textarea-autosize)
 
 Drop-in replacement for the textarea component which automatically resizes
-textarea as content changes. A native React version of the popular
+textarea as content changes. A native solid version of the popular
 [jQuery Autosize](http://www.jacklmoore.com/autosize/)! Weighs
 around <span class="weight">1.3KB</span> (minified & gzipped).
 
 This module supports IE9 and above.
 
 ```javascript
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "solid-textarea-autosize";
 
 // If you use CommonJS syntax:
-// var TextareaAutosize = require('react-textarea-autosize').default;
+// var TextareaAutosize = require('solid-textarea-autosize').default;
 
-React.renderComponent(
-  <div>
-    <TextareaAutosize />
-  </div>,
-  document.getElementById('element'),
+render(
+  () => (
+    <div>
+      <TextareaAutosize />
+    </div>
+  ),
+  document.getElementById("element"),
 );
 ```
 
 ## Install
 
-`npm install react-textarea-autosize`
+`npm install solid-textarea-autosize`
 
 ## Demo
 
-https://andarist.github.io/react-textarea-autosize/
+https://andarist.github.io/solid-textarea-autosize/
 
 ## Props
 
@@ -69,20 +73,20 @@ To autofocus:
 
 (all HTML attributes are passed to inner textarea)
 
-### How to test it with jest and react-test-renderer if you need ref
+### How to test it with jest and solid-test-renderer if you need ref
 
 Because [jest](https://github.com/facebook/jest) provides polyfills for DOM
 objects by requiring [jsdom](https://github.com/tmpvar/jsdom) and
-[react-test-renderer](https://www.npmjs.com/package/react-test-renderer) doesn't
+[solid-test-renderer](https://www.npmjs.com/package/solid-test-renderer) doesn't
 provide refs for rendered components out of the box (calling ref callbacks with
 `null`), you need to supply a mocked ref in your tests in you need it for your tests.
 You can do it like this (more can be read
-[here](https://github.com/facebook/react/issues/7740#issuecomment-247335106)):
+[here](https://github.com/facebook/solid/issues/7740#issuecomment-247335106)):
 
 ```js
 const tree = renderer
   .create(<TextareaAutosize />, {
-    createNodeMock: () => document.createElement('textarea'),
+    createNodeMock: () => document.createElement("textarea"),
   })
   .toJSON();
 ```

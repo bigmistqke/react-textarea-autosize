@@ -1,10 +1,10 @@
-import * as React from 'react';
+import { ComponentProps, onMount } from 'solid-js';
+import { JSX } from 'solid-js/jsx-runtime';
 import calculateNodeHeight from './calculateNodeHeight';
 import getSizingData, { SizingData } from './getSizingData';
-import { useComposedRef, useWindowResizeListener } from './hooks';
-import { noop } from './utils';
+import { useWindowResizeListener } from './hooks';
 
-type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+type TextareaProps = ComponentProps<'textarea'>;
 
 type Style = Omit<
   NonNullable<TextareaProps['style']>,
@@ -24,78 +24,61 @@ export interface TextareaAutosizeProps extends Omit<TextareaProps, 'style'> {
   style?: Style;
 }
 
-const TextareaAutosize: React.ForwardRefRenderFunction<
-  HTMLTextAreaElement,
-  TextareaAutosizeProps
-> = (
-  {
-    cacheMeasurements,
-    maxRows,
-    minRows,
-    onChange = noop,
-    onHeightChange = noop,
-    ...props
-  },
-  userRef: React.Ref<HTMLTextAreaElement>,
-) => {
-  if (process.env.NODE_ENV !== 'production' && props.style) {
-    if ('maxHeight' in props.style) {
-      throw new Error(
-        'Using `style.maxHeight` for <TextareaAutosize/> is not supported. Please use `maxRows`.',
-      );
-    }
-    if ('minHeight' in props.style) {
-      throw new Error(
-        'Using `style.minHeight` for <TextareaAutosize/> is not supported. Please use `minRows`.',
-      );
-    }
-  }
-  const isControlled = props.value !== undefined;
-  const libRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const ref = useComposedRef(libRef, userRef);
-  const heightRef = React.useRef(0);
-  const measurementsCacheRef = React.useRef<SizingData>();
+type Props = {
+  cacheMeasurements?: boolean;
+  maxRows?: number;
+  minRows?: number;
+  oninput?: (event: InputEvent) => void;
+  ref: (textarea: HTMLTextAreaElement) => void;
+  onHeightChange?: (
+    height: number,
+    { rowHeight }: { rowHeight: number },
+  ) => void;
+} & TextareaProps;
+
+export default function TextareaAutosize(props: Props) {
+  let textarea: HTMLTextAreaElement;
+  let heightRef = 0;
+  let measurementsCacheRef: SizingData | undefined = undefined;
 
   const resizeTextarea = () => {
-    const node = libRef.current!;
+    const node = textarea!;
     const nodeSizingData =
-      cacheMeasurements && measurementsCacheRef.current
-        ? measurementsCacheRef.current
+      props.cacheMeasurements && measurementsCacheRef
+        ? measurementsCacheRef
         : getSizingData(node);
 
     if (!nodeSizingData) {
       return;
     }
 
-    measurementsCacheRef.current = nodeSizingData;
+    measurementsCacheRef = nodeSizingData;
 
     const [height, rowHeight] = calculateNodeHeight(
       nodeSizingData,
       node.value || node.placeholder || 'x',
-      minRows,
-      maxRows,
+      props.minRows,
+      props.maxRows,
     );
 
-    if (heightRef.current !== height) {
-      heightRef.current = height;
+    if (heightRef !== height) {
+      heightRef = height;
       node.style.setProperty('height', `${height}px`, 'important');
-      onHeightChange(height, { rowHeight });
+      props.onHeightChange?.(height, { rowHeight });
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!isControlled) {
+  const handleChange = (event: InputEvent) => {
+    resizeTextarea();
+    props.oninput?.(event);
+  };
+
+  onMount(() => {
+    if (typeof document !== 'undefined') {
       resizeTextarea();
+      useWindowResizeListener(resizeTextarea);
     }
-    onChange(event);
-  };
+  });
 
-  if (typeof document !== 'undefined') {
-    React.useLayoutEffect(resizeTextarea);
-    useWindowResizeListener(resizeTextarea);
-  }
-
-  return <textarea {...props} onChange={handleChange} ref={ref} />;
-};
-
-export default /* #__PURE__ */ React.forwardRef(TextareaAutosize);
+  return <textarea {...props} oninput={handleChange} ref={textarea!} />;
+}
