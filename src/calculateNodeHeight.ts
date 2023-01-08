@@ -1,5 +1,5 @@
-import { SizingData } from './getSizingData';
-import forceHiddenStyles from './forceHiddenStyles';
+import { SizingData } from "./getSizingData";
+import forceHiddenStyles from "./forceHiddenStyles";
 
 // TODO: use labelled tuples once they are avaiable:
 //   export type CalculatedNodeHeights = [height: number, rowHeight: number];
@@ -11,7 +11,7 @@ let hiddenTextarea: HTMLTextAreaElement | null = null;
 const getHeight = (node: HTMLElement, sizingData: SizingData): number => {
   const height = node.scrollHeight;
 
-  if (sizingData.sizingStyle.boxSizing === 'border-box') {
+  if (sizingData.sizingStyle.boxSizing === "border-box") {
     // border-box: add border, since height = content + padding + border
     return height + sizingData.borderSize;
   }
@@ -27,9 +27,9 @@ export default function calculateNodeHeight(
   maxRows = Infinity,
 ): CalculatedNodeHeights {
   if (!hiddenTextarea) {
-    hiddenTextarea = document.createElement('textarea');
-    hiddenTextarea.setAttribute('tabindex', '-1');
-    hiddenTextarea.setAttribute('aria-hidden', 'true');
+    hiddenTextarea = document.createElement("textarea");
+    hiddenTextarea.setAttribute("tabindex", "-1");
+    hiddenTextarea.setAttribute("aria-hidden", "true");
     forceHiddenStyles(hiddenTextarea);
   }
 
@@ -51,17 +51,17 @@ export default function calculateNodeHeight(
   let height = getHeight(hiddenTextarea, sizingData);
 
   // measure height of a textarea with a single row
-  hiddenTextarea.value = 'x';
+  hiddenTextarea.value = "x";
   const rowHeight = hiddenTextarea.scrollHeight - paddingSize;
 
   let minHeight = rowHeight * minRows;
-  if (boxSizing === 'border-box') {
+  if (boxSizing === "border-box") {
     minHeight = minHeight + paddingSize + borderSize;
   }
   height = Math.max(minHeight, height);
 
   let maxHeight = rowHeight * maxRows;
-  if (boxSizing === 'border-box') {
+  if (boxSizing === "border-box") {
     maxHeight = maxHeight + paddingSize + borderSize;
   }
   height = Math.min(maxHeight, height);

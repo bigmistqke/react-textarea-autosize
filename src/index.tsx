@@ -1,22 +1,19 @@
-import { ComponentProps, onMount } from 'solid-js';
-import { JSX } from 'solid-js/jsx-runtime';
-import calculateNodeHeight from './calculateNodeHeight';
-import getSizingData, { SizingData } from './getSizingData';
-import { useWindowResizeListener } from './hooks';
+import { ComponentProps, onMount } from "solid-js";
+import { JSX } from "solid-js/jsx-runtime";
+import calculateNodeHeight from "./calculateNodeHeight";
+import getSizingData, { SizingData } from "./getSizingData";
+import { useWindowResizeListener } from "./hooks";
 
-type TextareaProps = ComponentProps<'textarea'>;
+type TextareaProps = ComponentProps<"textarea">;
 
-type Style = Omit<
-  NonNullable<TextareaProps['style']>,
-  'maxHeight' | 'minHeight'
-> & {
+type Style = Omit<NonNullable<TextareaProps["style"]>, "maxHeight" | "minHeight"> & {
   height?: number;
 };
 
 export type TextareaHeightChangeMeta = {
   rowHeight: number;
 };
-export interface TextareaAutosizeProps extends Omit<TextareaProps, 'style'> {
+export interface TextareaAutosizeProps extends Omit<TextareaProps, "style"> {
   maxRows?: number;
   minRows?: number;
   onHeightChange?: (height: number, meta: TextareaHeightChangeMeta) => void;
@@ -30,10 +27,7 @@ type Props = {
   minRows?: number;
   oninput?: (event: InputEvent) => void;
   ref: (textarea: HTMLTextAreaElement) => void;
-  onHeightChange?: (
-    height: number,
-    { rowHeight }: { rowHeight: number },
-  ) => void;
+  onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
 } & TextareaProps;
 
 export default function TextareaAutosize(props: Props) {
@@ -44,9 +38,7 @@ export default function TextareaAutosize(props: Props) {
   const resizeTextarea = () => {
     const node = textarea!;
     const nodeSizingData =
-      props.cacheMeasurements && measurementsCacheRef
-        ? measurementsCacheRef
-        : getSizingData(node);
+      props.cacheMeasurements && measurementsCacheRef ? measurementsCacheRef : getSizingData(node);
 
     if (!nodeSizingData) {
       return;
@@ -56,14 +48,14 @@ export default function TextareaAutosize(props: Props) {
 
     const [height, rowHeight] = calculateNodeHeight(
       nodeSizingData,
-      node.value || node.placeholder || 'x',
+      node.value || node.placeholder || "x",
       props.minRows,
       props.maxRows,
     );
 
     if (heightRef !== height) {
       heightRef = height;
-      node.style.setProperty('height', `${height}px`, 'important');
+      node.style.setProperty("height", `${height}px`, "important");
       props.onHeightChange?.(height, { rowHeight });
     }
   };
@@ -74,7 +66,7 @@ export default function TextareaAutosize(props: Props) {
   };
 
   onMount(() => {
-    if (typeof document !== 'undefined') {
+    if (typeof document !== "undefined") {
       resizeTextarea();
       useWindowResizeListener(resizeTextarea);
     }
