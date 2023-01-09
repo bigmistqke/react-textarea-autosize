@@ -1,7 +1,8 @@
 import { createEffect, createSignal, For } from "solid-js";
 import { render } from "solid-js/web";
 
-import TextareaAutosize from "solid-textarea-autosize";
+//import TextareaAutosize from "solid-textarea-autosize";
+import TextareaAutosize from "../src";
 
 const range = (n: number): number[] => Array.from({ length: n }, (_, i) => i);
 
@@ -54,7 +55,7 @@ const MinMaxRowsBorderBox = () => {
 `}
       </pre>
       <TextareaAutosize
-        style={{ boxSizing: "border-box" }}
+        style={{ "box-sizing": "border-box" }}
         minRows={3}
         maxRows={6}
         value="Just a single line..."
@@ -76,23 +77,6 @@ const MaxRows = () => {
 `}
       </pre>
       <TextareaAutosize maxRows={5} value="Just a single line..." />
-    </div>
-  );
-};
-
-const SetRows = () => {
-  return (
-    <div>
-      <h2>{"Component with rows set"}</h2>
-      <pre>
-        {`
-  <TextareaAutosize
-    rows={4}
-    value="Just a single line..."
-    />
-`}
-      </pre>
-      <TextareaAutosize rows={4} value="Just a single line..." />
     </div>
   );
 };
