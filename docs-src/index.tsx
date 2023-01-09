@@ -120,66 +120,6 @@ const OnHeightChangeCallback = () => {
   );
 };
 
-function TextareaAutosize2(
-  props: {
-    cacheMeasurements?: boolean;
-    maxRows?: number;
-    minRows?: number;
-    oninput?: (event: InputEvent) => void;
-    ref?: (textarea: HTMLTextAreaElement) => void;
-    onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
-  } & TextareaProps,
-) {
-  createEffect(() => console.log("TextareaAutosize", JSON.stringify(props)));
-  /* 
-
-  const [textarea, setTextarea] = createSignal<HTMLTextAreaElement>();
-  let heightRef = 0;
-  let measurementsCacheRef: SizingData | undefined = undefined;
-
-  const resizeTextarea = () => {
-    const node = textarea();
-    if (!node) return;
-    const nodeSizingData =
-      props.cacheMeasurements && measurementsCacheRef ? measurementsCacheRef : getSizingData(node);
-
-    if (!nodeSizingData) {
-      return;
-    }
-
-    measurementsCacheRef = nodeSizingData;
-
-    const [height, rowHeight] = calculateNodeHeight(
-      nodeSizingData,
-      node.value || node.placeholder || "x",
-      props.minRows,
-      props.maxRows,
-    );
-
-    if (heightRef !== height) {
-      heightRef = height;
-      node.style.setProperty("height", `${height}px`, "important");
-      props.onHeightChange?.(height, { rowHeight });
-    }
-  };
-
-  const handleChange = (event: InputEvent) => {
-    resizeTextarea();
-    props.oninput?.(event);
-  };
-
-  createEffect(on(() => props.value, resizeTextarea));
-
-  createEffect(() => {
-    if (typeof document !== "undefined" && textarea()) {
-      resizeTextarea();
-      useWindowResizeListener(resizeTextarea);
-    }
-  }); */
-
-  return <textarea {...props} oninput={props.oninput} />;
-}
-
 const MultipleTextareas = () => {
   const [value, setValue] = createSignal("");
   createEffect(() => console.log("value changed", value()));
@@ -193,8 +133,7 @@ const MultipleTextareas = () => {
         oninput={(ev) => setValue((ev.target as HTMLTextAreaElement).value)}
       />
       <div>{"Those get controlled by the one above."}</div>
-      <TextareaAutosize2 value={value()} />
-      {/* <For each={Array(15).fill("")}>{() => <TextareaAutosize value={value()} />}</For> */}
+      <For each={Array(15).fill("")}>{() => <TextareaAutosize value={value()} />}</For>
     </div>
   );
 };
@@ -202,12 +141,12 @@ const MultipleTextareas = () => {
 const Demo = () => {
   return (
     <div>
-      {/* <Basic />
+      <Basic />
       <MinMaxRows />
       <MinMaxRowsBorderBox />
       <MaxRows />
       <SetRows />
-      <OnHeightChangeCallback /> */}
+      <OnHeightChangeCallback />
       <MultipleTextareas />
     </div>
   );
