@@ -1,12 +1,11 @@
-import { ComponentProps, createEffect, createSignal, on, onMount } from "solid-js";
-import { JSX } from "solid-js/jsx-runtime";
+import { ComponentProps, createEffect, createSignal, on } from "solid-js";
 import calculateNodeHeight from "./calculateNodeHeight";
 import getSizingData, { SizingData } from "./getSizingData";
 import { useWindowResizeListener } from "./hooks";
 
 type TextareaProps = ComponentProps<"textarea">;
 
-type Style = Omit<NonNullable<TextareaProps["style"]>, "maxHeight" | "minHeight"> & {
+type Style = Omit<NonNullable<TextareaProps["style"]>, "max-height" | "min-height"> & {
   height?: number;
 };
 
