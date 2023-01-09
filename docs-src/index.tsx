@@ -1,7 +1,7 @@
-import { createSignal } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { render } from "solid-js/web";
 
-import TextareaAutosize from "../src";
+import TextareaAutosize from "solid-textarea-autosize";
 
 const range = (n: number): number[] => Array.from({ length: n }, (_, i) => i);
 
@@ -97,48 +97,6 @@ const SetRows = () => {
   );
 };
 
-const ControlledMode = () => {
-  const [value, setValue] = createSignal(new Array(15).join("\nLine."));
-  return (
-    <div>
-      <h2>{"Controlled mode"}</h2>
-      <pre>
-        {`
-  <TextareaAutosize
-    cacheMeasurements
-    value={value}
-    onChange={ev => setValue(ev.target.value)}
-    />
-`}
-      </pre>
-      <TextareaAutosize
-        cacheMeasurements
-        value={value()}
-        onChange={(ev) => setValue((ev.target as HTMLTextAreaElement).value)}
-      />
-      <button onClick={() => setValue("This value was set programatically")}>
-        {"Change value programatically"}
-      </button>
-    </div>
-  );
-};
-
-const UncontrolledMode = () => {
-  return (
-    <div>
-      <h2>{"Uncontrolled mode"}</h2>
-      <pre>
-        {`
-  <TextareaAutosize
-    value={new Array(15).join('\nLine.')}
-    />
-`}
-      </pre>
-      <TextareaAutosize value={new Array(15).join("\nLine.")} />
-    </div>
-  );
-};
-
 const OnHeightChangeCallback = () => {
   return (
     <div>
@@ -162,20 +120,81 @@ const OnHeightChangeCallback = () => {
   );
 };
 
+function TextareaAutosize2(
+  props: {
+    cacheMeasurements?: boolean;
+    maxRows?: number;
+    minRows?: number;
+    oninput?: (event: InputEvent) => void;
+    ref?: (textarea: HTMLTextAreaElement) => void;
+    onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
+  } & TextareaProps,
+) {
+  createEffect(() => console.log("TextareaAutosize", JSON.stringify(props)));
+  /* 
+
+  const [textarea, setTextarea] = createSignal<HTMLTextAreaElement>();
+  let heightRef = 0;
+  let measurementsCacheRef: SizingData | undefined = undefined;
+
+  const resizeTextarea = () => {
+    const node = textarea();
+    if (!node) return;
+    const nodeSizingData =
+      props.cacheMeasurements && measurementsCacheRef ? measurementsCacheRef : getSizingData(node);
+
+    if (!nodeSizingData) {
+      return;
+    }
+
+    measurementsCacheRef = nodeSizingData;
+
+    const [height, rowHeight] = calculateNodeHeight(
+      nodeSizingData,
+      node.value || node.placeholder || "x",
+      props.minRows,
+      props.maxRows,
+    );
+
+    if (heightRef !== height) {
+      heightRef = height;
+      node.style.setProperty("height", `${height}px`, "important");
+      props.onHeightChange?.(height, { rowHeight });
+    }
+  };
+
+  const handleChange = (event: InputEvent) => {
+    resizeTextarea();
+    props.oninput?.(event);
+  };
+
+  createEffect(on(() => props.value, resizeTextarea));
+
+  createEffect(() => {
+    if (typeof document !== "undefined" && textarea()) {
+      resizeTextarea();
+      useWindowResizeListener(resizeTextarea);
+    }
+  }); */
+
+  return <textarea {...props} oninput={props.oninput} />;
+}
+
 const MultipleTextareas = () => {
   const [value, setValue] = createSignal("");
+  createEffect(() => console.log("value changed", value()));
+  console.log(TextareaAutosize);
   return (
     <div>
       <h2>{"Multiple textareas updated at the same time."}</h2>
       <div>{"This one controls the rest."}</div>
       <TextareaAutosize
         value={value()}
-        onChange={(ev) => setValue((ev.target as HTMLTextAreaElement).value)}
+        oninput={(ev) => setValue((ev.target as HTMLTextAreaElement).value)}
       />
       <div>{"Those get controlled by the one above."}</div>
-      {range(15).map((i) => (
-        <TextareaAutosize value={value()} />
-      ))}
+      <TextareaAutosize2 value={value()} />
+      {/* <For each={Array(15).fill("")}>{() => <TextareaAutosize value={value()} />}</For> */}
     </div>
   );
 };
@@ -183,14 +202,12 @@ const MultipleTextareas = () => {
 const Demo = () => {
   return (
     <div>
-      <Basic />
+      {/* <Basic />
       <MinMaxRows />
       <MinMaxRowsBorderBox />
       <MaxRows />
       <SetRows />
-      <ControlledMode />
-      <UncontrolledMode />
-      <OnHeightChangeCallback />
+      <OnHeightChangeCallback /> */}
       <MultipleTextareas />
     </div>
   );
