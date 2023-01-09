@@ -34,7 +34,7 @@ render(
 
 ## Demo
 
-~~https://andarist.github.io/solid-textarea-autosize/~~
+https://bigmistqke.github.io/solid-textarea-autosize/
 
 ## Props
 
