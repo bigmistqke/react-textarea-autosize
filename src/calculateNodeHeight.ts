@@ -4,7 +4,7 @@ import forceHiddenStyles from "./forceHiddenStyles";
 // TODO: use labelled tuples once they are avaiable:
 //   export type CalculatedNodeHeights = [height: number, rowHeight: number];
 // https://github.com/microsoft/TypeScript/issues/28259
-export type CalculatedNodeHeights = number[];
+export type CalculatedNodeHeights = [height: number, rowHeight: number];
 
 let hiddenTextarea: HTMLTextAreaElement | null = null;
 
@@ -42,6 +42,7 @@ export default function calculateNodeHeight(
 
   Object.keys(sizingStyle).forEach((_key) => {
     const key = _key as keyof typeof sizingStyle;
+    // TODO:  style[key as any] is needed since .style follows react's camelCase CSSStyleDeclaration
     hiddenTextarea!.style[key as any] = sizingStyle[key] as any;
   });
 
