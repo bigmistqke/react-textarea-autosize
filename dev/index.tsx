@@ -122,8 +122,6 @@ const OnHeightChangeCallback = () => {
 
 const MultipleTextareas = () => {
   const [value, setValue] = createSignal("");
-  createEffect(() => console.log("value changed", value()));
-  console.log(TextareaAutosize);
   return (
     <div>
       <h2>{"Multiple textareas updated at the same time."}</h2>
