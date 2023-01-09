@@ -1,8 +1,7 @@
 import { createEffect, createSignal, For } from "solid-js";
 import { render } from "solid-js/web";
 
-//import TextareaAutosize from "solid-textarea-autosize";
-import TextareaAutosize from "../src";
+import TextareaAutosize from "solid-textarea-autosize";
 
 const range = (n: number): number[] => Array.from({ length: n }, (_, i) => i);
 
