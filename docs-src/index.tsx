@@ -196,4 +196,4 @@ const Demo = () => {
   );
 };
 
-render(<Demo />, document.getElementById("main"));
+render(() => <Demo />, document.getElementById("main") as HTMLElement);
