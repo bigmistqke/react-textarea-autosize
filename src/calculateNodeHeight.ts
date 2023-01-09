@@ -11,7 +11,7 @@ let hiddenTextarea: HTMLTextAreaElement | null = null;
 const getHeight = (node: HTMLElement, sizingData: SizingData): number => {
   const height = node.scrollHeight;
 
-  if (sizingData.sizingStyle.boxSizing === "border-box") {
+  if (sizingData.sizingStyle["box-sizing"] === "border-box") {
     // border-box: add border, since height = content + padding + border
     return height + sizingData.borderSize;
   }
@@ -38,11 +38,11 @@ export default function calculateNodeHeight(
   }
 
   const { paddingSize, borderSize, sizingStyle } = sizingData;
-  const { boxSizing } = sizingStyle;
+  const { "box-sizing": boxSizing } = sizingStyle;
 
   Object.keys(sizingStyle).forEach((_key) => {
     const key = _key as keyof typeof sizingStyle;
-    hiddenTextarea!.style[key] = sizingStyle[key] as any;
+    hiddenTextarea!.style[key as any] = sizingStyle[key] as any;
   });
 
   forceHiddenStyles(hiddenTextarea);

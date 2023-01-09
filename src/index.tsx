@@ -31,8 +31,6 @@ function TextareaAutosize(
     onHeightChange?: (height: number, { rowHeight }: { rowHeight: number }) => void;
   } & TextareaProps,
 ) {
-  createEffect(() => console.log("TextareaAutosize", JSON.stringify(props)));
-
   const [textarea, setTextarea] = createSignal<HTMLTextAreaElement>();
   let heightRef = 0;
   let measurementsCacheRef: SizingData | undefined = undefined;

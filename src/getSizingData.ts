@@ -1,34 +1,39 @@
+import { JSX } from "solid-js/jsx-runtime";
 import { pick } from "./utils";
 
 const SIZING_STYLE = [
-  "borderBottomWidth",
-  "borderLeftWidth",
-  "borderRightWidth",
-  "borderTopWidth",
-  "boxSizing",
-  "fontFamily",
-  "fontSize",
-  "fontStyle",
-  "fontWeight",
-  "letterSpacing",
-  "lineHeight",
-  "paddingBottom",
-  "paddingLeft",
-  "paddingRight",
-  "paddingTop",
+  "border-bottom-width",
+  "border-left-width",
+  "border-right-width",
+  "border-top-width",
+  "box-sizing",
+  "font-family",
+  "font-size",
+  "font-style",
+  "font-zeight",
+  "letter-spacing",
+  "line-height",
+  "padding-bottom",
+  "padding-left",
+  "padding-right",
+  "padding-top",
   // non-standard
-  "tabSize",
-  "textIndent",
+  "tab-size",
+  "text-indent",
   // non-standard
-  "textRendering",
-  "textTransform",
+  "text-rendering",
+  "text-transform",
   "width",
-  "wordBreak",
+  "word-break",
 ] as const;
 
-type SizingProps = Extract<typeof SIZING_STYLE[number], keyof CSSStyleDeclaration>;
+// TODO:  solid afaik does not have an equivalent to CSSStyleDeclaration
+//        replace this line once there is a proper solid equivalent
+type CSSStyleDeclarationSolid = { [Property in keyof JSX.CSSProperties]: string };
 
-type SizingStyle = Pick<CSSStyleDeclaration, SizingProps>;
+type SizingProps = Extract<typeof SIZING_STYLE[number], keyof CSSStyleDeclarationSolid>;
+
+type SizingStyle = Pick<CSSStyleDeclarationSolid, SizingProps>;
 
 export type SizingData = {
   sizingStyle: SizingStyle;
@@ -40,17 +45,17 @@ const isIE =
   typeof document !== "undefined" ? !!(document.documentElement as any).currentStyle : false;
 
 const getSizingData = (node: HTMLElement): SizingData | null => {
-  const style = window.getComputedStyle(node);
+  const style = window.getComputedStyle(node) as unknown as CSSStyleDeclarationSolid;
 
-  if (style === null) {
+  if (!style) {
     return null;
   }
 
   const sizingStyle = pick(SIZING_STYLE as unknown as SizingProps[], style);
-  const { boxSizing } = sizingStyle;
+  const { "box-sizing": boxSizing } = sizingStyle;
 
   // probably node is detached from DOM, can't read computed dimensions
-  if (boxSizing === "") {
+  if (!boxSizing) {
     return null;
   }
 
@@ -59,17 +64,18 @@ const getSizingData = (node: HTMLElement): SizingData | null => {
   if (isIE && boxSizing === "border-box") {
     sizingStyle.width =
       parseFloat(sizingStyle.width!) +
-      parseFloat(sizingStyle.borderRightWidth!) +
-      parseFloat(sizingStyle.borderLeftWidth!) +
-      parseFloat(sizingStyle.paddingRight!) +
-      parseFloat(sizingStyle.paddingLeft!) +
+      parseFloat(sizingStyle["border-right-width"]!) +
+      parseFloat(sizingStyle["border-left-width"]!) +
+      parseFloat(sizingStyle["padding-right"]!) +
+      parseFloat(sizingStyle["padding-left"]!) +
       "px";
   }
 
-  const paddingSize = parseFloat(sizingStyle.paddingBottom!) + parseFloat(sizingStyle.paddingTop!);
+  const paddingSize =
+    parseFloat(sizingStyle["padding-bottom"]!) + parseFloat(sizingStyle["padding-top"]!);
 
   const borderSize =
-    parseFloat(sizingStyle.borderBottomWidth!) + parseFloat(sizingStyle.borderTopWidth!);
+    parseFloat(sizingStyle["border-bottom-width"]!) + parseFloat(sizingStyle["border-top-width"]!);
 
   return {
     sizingStyle,
