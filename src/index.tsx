@@ -1,4 +1,4 @@
-import { ComponentProps, createEffect, createSignal, onMount } from "solid-js";
+import { ComponentProps, createEffect, createSignal, on, onMount } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import calculateNodeHeight from "./calculateNodeHeight";
 import getSizingData, { SizingData } from "./getSizingData";
@@ -65,6 +65,8 @@ function TextareaAutosize(
     resizeTextarea();
     props.oninput?.(event);
   };
+
+  createEffect(on(() => props.value, resizeTextarea));
 
   createEffect(() => {
     if (typeof document !== "undefined" && textarea()) {
