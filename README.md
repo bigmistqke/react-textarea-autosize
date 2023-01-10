@@ -72,21 +72,3 @@ To autofocus:
 ```
 
 (all HTML attributes are passed to inner textarea)
-
-### How to test it with jest and solid-test-renderer if you need ref
-
-Because [jest](https://github.com/facebook/jest) provides polyfills for DOM
-objects by requiring [jsdom](https://github.com/tmpvar/jsdom) and
-[solid-test-renderer](https://www.npmjs.com/package/solid-test-renderer) doesn't
-provide refs for rendered components out of the box (calling ref callbacks with
-`null`), you need to supply a mocked ref in your tests in you need it for your tests.
-You can do it like this (more can be read
-[here](https://github.com/facebook/solid/issues/7740#issuecomment-247335106)):
-
-```js
-const tree = renderer
-  .create(<TextareaAutosize />, {
-    createNodeMock: () => document.createElement("textarea"),
-  })
-  .toJSON();
-```
