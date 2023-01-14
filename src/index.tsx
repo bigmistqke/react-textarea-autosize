@@ -73,9 +73,15 @@ function TextareaAutosize(props: TextareaAutosizeProps & TextareaProps) {
     }
   };
 
-  const handleChange = (event: InputEvent) => {
+  const handleChange = (
+    event: InputEvent & {
+      currentTarget: HTMLTextAreaElement;
+      target: Element;
+    },
+  ) => {
     resizeTextarea();
-    props.oninput?.(event);
+    if (typeof props.oninput === "function") props.oninput(event);
+    if (typeof props.onInput === "function") props.onInput(event);
   };
 
   createEffect(on(() => props.value, resizeTextarea));
@@ -87,7 +93,14 @@ function TextareaAutosize(props: TextareaAutosizeProps & TextareaProps) {
     }
   });
 
-  return <textarea {...props} oninput={handleChange} ref={(element) => setTextarea(element)} />;
+  return (
+    <textarea
+      {...props}
+      oninput={handleChange}
+      onInput={handleChange}
+      ref={(element) => setTextarea(element)}
+    />
+  );
 }
 
 export default TextareaAutosize;
